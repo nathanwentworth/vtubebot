@@ -2,14 +2,14 @@
 Description=vtube bot
 
 [Service]
-ExecStart=/var/www/vtubebot/main.js
-Restart=always
+ExecStart=/home/nathan/.nvm/versions/node/v16.17.1/bin/node /home/nathan/vtubebot/main.js
+Restart=on-failure
 User=root
 # Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
 Group=root
 Environment=PATH=/usr/bin:/usr/local/bin
 Environment=NODE_ENV=production
-WorkingDirectory=/var/www/vtubebot
+WorkingDirectory=/home/nathan/vtubebot
 
 [Install]
 WantedBy=multi-user.target
