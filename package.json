@@ -1,0 +1,26 @@
+{
+  "name": "vtubebot",
+  "version": "1.0.0",
+  "description": "vtube bot",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nathanwentworth/vtubebot.git"
+  },
+  "author": "nathan wentworth <nwentworth95@gmail.com> (http://nathanwentworth.co)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nathanwentworth/vtubebot/issues"
+  },
+  "homepage": "https://github.com/nathanwentworth/vtubebot#readme",
+  "dependencies": {
+    "discord.js": "^13.0.1",
+    "nodejs": "^0.0.0"
+  },
+}

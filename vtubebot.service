@@ -1,0 +1,15 @@
+[Unit]
+Description=vtube bot
+
+[Service]
+ExecStart=/var/www/vtubebot/main.js
+Restart=always
+User=root
+# Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
+Group=root
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=/var/www/vtubebot
+
+[Install]
+WantedBy=multi-user.target
