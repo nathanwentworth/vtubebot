@@ -91,4 +91,15 @@ client.on('messageDelete', (message) => {
   
 })
 
+// hopefully fixes the issue with tweets showing the embed anyway
+// from https://github.com/discord/discord-api-docs/issues/4442
+client.on('messageUpdate', (oldMessage, newMessage) => {
+  if (
+    newMessage.embeds.length > 0 &&
+    newMessage.flags.has(MessageFlags.FLAGS.SUPPRESS_EMBEDS)
+  ) {
+    newMessage.suppressEmbeds().catch(() => {});
+  }
+})
+
 client.login(loginToken);
