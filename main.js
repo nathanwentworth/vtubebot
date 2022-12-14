@@ -45,14 +45,16 @@ client.on(`messageCreate`, (message) => {
   if (spoiledTwitterUrls && spoiledTwitterUrls.length > 0) {
     message.suppressEmbeds(true);
     processUrls(spoiledTwitterUrls);
+    setTimeout(() => { message.suppressEmbeds(true); }, 2500);
   }
 
   let twitterUrls = messageContent.match(/\b(https?:\/\/(mobile.)?twitter\.com\/[^\s]*\b)/g);
   if (twitterUrls && twitterUrls.length > 0) {
     console.log('embeds', JSON.stringify(message.embeds));
     message.suppressEmbeds(true);
-    
     processUrls(twitterUrls);
+    setTimeout(() => { message.suppressEmbeds(true); }, 2500);
+    
   }
 
   if (newUrls.length > 0) {
@@ -98,7 +100,7 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
     newMessage.embeds.length > 0 &&
     newMessage.flags.has(MessageFlags.FLAGS.SUPPRESS_EMBEDS)
   ) {
-    newMessage.suppressEmbeds().catch(() => {});
+    newMessage.suppressEmbeds(true).catch(() => {});
   }
 })
 
