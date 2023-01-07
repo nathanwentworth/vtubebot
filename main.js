@@ -1,7 +1,7 @@
 const config = require('./config.json');
 const auth = require('./auth.json');
 const loginToken = auth.token;
-const { Client, GatewayIntentBits } = require(`discord.js`);
+const { Client, GatewayIntentBits, MessageFlags } = require(`discord.js`);
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -11,7 +11,7 @@ const client = new Client({
 });
 
 client.on(`ready`, () => {
-  console.log('vtube bot started');
+  console.log('vtube bot started: version 2023.01.07r1');
 
 });
 
@@ -66,6 +66,23 @@ client.on(`messageCreate`, (message) => {
 
 })
 
+// hopefully fixes the issue with tweets showing the embed anyway
+// from https://github.com/discord/discord-api-docs/issues/4442
+client.on('messageUpdate', (oldMessage, newMessage) => {
+  console.log('message updated, has embeds? ' + (newMessage.embeds.length > 0) + ' suppressEmbeds? ' + newMessage.flags + ' ' + newMessage.flags.has(MessageFlags.SuppressEmbeds));
+  if (
+    newMessage.embeds.length > 0 &&
+    newMessage.flags.has(MessageFlags.FLAGS.SUPPRESS_EMBEDS)
+  ) {
+    newMessage.suppressEmbeds(true).catch(() => {
+      console.log('could not suppress embeds on message', newMessage);
+    });
+  }
+})
+
+// client.on('messageDelete', ())
+
+
 function processUrls(urls) {
   for (var i = 0; i < urls.length; i++) {
     let url = urls[i];
@@ -89,19 +106,5 @@ function messageHasEmbed(embeds) {
   return false;
 }
 
-client.on('messageDelete', (message) => {
-  
-})
-
-// hopefully fixes the issue with tweets showing the embed anyway
-// from https://github.com/discord/discord-api-docs/issues/4442
-client.on('messageUpdate', (oldMessage, newMessage) => {
-  if (
-    newMessage.embeds.length > 0 &&
-    newMessage.flags.has(MessageFlags.FLAGS.SUPPRESS_EMBEDS)
-  ) {
-    newMessage.suppressEmbeds(true).catch(() => {});
-  }
-})
 
 client.login(loginToken);
