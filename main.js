@@ -7,6 +7,7 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMessageReactions,
   ]
 });
 
@@ -33,7 +34,11 @@ client.on(`messageCreate`, (message) => {
   newUrls = [];
   messageContent = message.content;
 
-  let hiddenEmbeds = messageContent.match(/\<\b(https?:\/\/(mobile.)?twitter\.com\/[^\s]*\b)\>/g);
+  if (messageContent[0] === '.') {
+    return;
+  }
+
+  let hiddenEmbeds = messageContent.match(/\<\b(https?:\/\/(mobile.)?(twitter|x)\.com\/[^\s]*\b)\>/g);
   if (hiddenEmbeds && hiddenEmbeds.length > 0) {
     for (var i = 0; i < hiddenEmbeds.length; i++) {
       messageContent = messageContent.replace(hiddenEmbeds[i], '');
@@ -41,14 +46,14 @@ client.on(`messageCreate`, (message) => {
     
   }
 
-  let spoiledTwitterUrls = messageContent.match(/\|\| *\b(https?:\/\/(mobile.)?twitter\.com\/[^\s]*\b) *\|\|/g);
+  let spoiledTwitterUrls = messageContent.match(/\|\| *\b(https?:\/\/(mobile.)?(twitter|x)\.com\/[^\s]*\b) *\|\|/g);
   if (spoiledTwitterUrls && spoiledTwitterUrls.length > 0) {
     message.suppressEmbeds(true);
     processUrls(spoiledTwitterUrls);
     setTimeout(() => { message.suppressEmbeds(true); }, 2500);
   }
 
-  let twitterUrls = messageContent.match(/\b(https?:\/\/(mobile.)?twitter\.com\/[^\s]*\b)/g);
+  let twitterUrls = messageContent.match(/\b(https?:\/\/(mobile.)?(twitter|x)\.com\/[^\s]*\b)/g);
   if (twitterUrls && twitterUrls.length > 0) {
     console.log('embeds', JSON.stringify(message.embeds));
     message.suppressEmbeds(true);
@@ -72,13 +77,22 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
   console.log('message updated, has embeds? ' + (newMessage.embeds.length > 0) + ' suppressEmbeds? ' + newMessage.flags + ' ' + newMessage.flags.has(MessageFlags.SuppressEmbeds));
   if (
     newMessage.embeds.length > 0 &&
-    newMessage.flags.has(MessageFlags.FLAGS.SUPPRESS_EMBEDS)
+    // newMessage.flags.has(MessageFlags.FLAGS.SUPPRESS_EMBEDS)
+    newMessage.flags.has(4)
   ) {
     newMessage.suppressEmbeds(true).catch(() => {
       console.log('could not suppress embeds on message', newMessage);
     });
   }
-})
+});
+
+client.on('messageReactionAdd', (messageReaction, user) => {
+  let isVtubeBot = (messageReaction.message.author.id === '1028702257203650650');
+  if (isVtubeBot && messageReaction.emoji.name === '❌') {
+    messageReaction.message.delete();
+    console.log('deleted message');
+  }
+});
 
 // client.on('messageDelete', ())
 
@@ -90,7 +104,8 @@ function processUrls(urls) {
     messageContent = messageContent.replace(url, '');
     newUrl = url.replace('mobile.', '');
     newUrl = newUrl.replace(/\?.*\b/g, '');
-    newUrl = newUrl.replace('/twitter', `/${ config.prefix }twitter`);
+    newUrl = newUrl.replace('/twitter.', `/${ config.prefix }twitter.`);
+    newUrl = newUrl.replace('/x.', `/${ config.prefix }twitter.`);
     newUrls.push(newUrl);
   }
 

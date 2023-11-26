@@ -4,7 +4,8 @@
   "description": "vtube bot",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js",
+    "deploy": "rsync -zrp . nathanwentworth.co:~/vtubebot/"
   },
   "engines": {
     "node": ">=16"
