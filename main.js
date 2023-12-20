@@ -106,6 +106,7 @@ function processUrls(urls) {
     newUrl = newUrl.replace(/\?.*\b/g, '');
     newUrl = newUrl.replace('/twitter.', `/${ config.prefix }twitter.`);
     newUrl = newUrl.replace('/x.', `/${ config.prefix }twitter.`);
+    newUrl = newUrl + '/en';
     newUrls.push(newUrl);
   }
 
